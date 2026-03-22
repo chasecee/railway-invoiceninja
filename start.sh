@@ -48,6 +48,25 @@ if [ "$ACCOUNT_COUNT" = "0" ]; then
   echo "Initial account created successfully."
 fi
 
+echo "=== Document root check ==="
+DOCROOT="/var/www/app/public"
+INDEX_FILE="$DOCROOT/index.php"
+echo "pwd=$(pwd)"
+echo "user=$(id -un)"
+if [ -f "$INDEX_FILE" ]; then
+  echo "FOUND $INDEX_FILE"
+else
+  echo "MISSING $INDEX_FILE"
+fi
+ls -ld /var/www/app "$DOCROOT" "$INDEX_FILE" 2>/dev/null || true
+if [ -f /usr/local/etc/php-fpm.d/www.conf ]; then
+  echo "php-fpm pool path settings:"
+  awk -F= '/^[[:space:]]*(chroot|chdir)[[:space:]]*=/{k=$1;v=$2;gsub(/^[[:space:]]+|[[:space:]]+$/, "", k);gsub(/^[[:space:]]+|[[:space:]]+$/, "", v);print k"="v}' /usr/local/etc/php-fpm.d/www.conf || true
+else
+  echo "php-fpm pool config not found"
+fi
+echo "=== End document root check ==="
+
 # Start services
 php-fpm -D
 exec nginx -g 'daemon off;'
