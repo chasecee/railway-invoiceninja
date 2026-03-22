@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    env_file:
+      - .env.docker.example
     environment:
       APP_ENV: ${APP_ENV:-production}
       APP_KEY: ${APP_KEY:-base64:0GhPyUG+YSw7ZRUfrLvv7MTycjVXAPAsIKA+NBiFWXQ=}
